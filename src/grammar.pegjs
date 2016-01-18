@@ -16,21 +16,23 @@
 start
   = Line*
 
-Line
+Line "line"
   = linenum:Integer ' ' statements:Statements NewLine { return new Line(linenum, statements); }
 
 NewLine = '\n'
 Printable = [^\n]
 
+ws "whitespace"
+  = [ \t\r\n]
 Integer = digits:[0-9]+ { return parseInt(digits.join('')); }
 
-Statements = statements:(Statement ':')* statement:Statement { return statements.concat([statement]);}
+Statements = statements:(Statement ws* ':')* ws* statement:Statement { return statements.concat([statement]);}
 
 Statement = Remark
           / Print
 
-Remark = 'REM ' comment:[^\n]* { return new RemarkStatement(comment); }
-Print  = 'PRINT ' printlist:PrintList { return new PrintStatement(printlist); }
+Remark = 'REM' ws+ comment:[^\n]* { return new RemarkStatement(comment); }
+Print  = 'PRINT' ws+ printlist:PrintList { return new PrintStatement(printlist); }
 
 PrintList = exprs:(Expression ';')* expr:Expression { return exprs.concat([expr]); }
 

@@ -15,11 +15,13 @@ describe('Parser', function() {
     });
 
     it('should parse a simple comment', function() {
-      console.log(parser.parse("10 REM This is a comment\n"));
+      var res = parser.parse("10 REM This is a comment\n");
+      console.log(res[0]);
     });
 
     it('should parse a simple statement', function() {
-      console.log(parser.parse("10 REM This is a comment\n"));
+      var res = parser.parse("10 PRINT \"HI\"\n");
+      console.log(res[0].statements[0]);
     });
   });
 

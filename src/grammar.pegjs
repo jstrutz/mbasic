@@ -1,20 +1,46 @@
+{
+  function Line(number, statements) {
+    this.number = number;
+    this.statements = statements;
+  }
+
+  function RemarkStatement(comment) {
+    this.comment = comment;
+  }
+
+  function PrintStatement(printList) {
+    this.printList = printList;
+  }
+}
+
 start
   = Line*
 
 Line
-  = linenum:Integer ' ' Statements NewLine
+  = linenum:Integer ' ' statements:Statements NewLine { return new Line(linenum, statements); }
 
 NewLine = '\n'
+Printable = [^\n]
 
-Integer = [0-9]+
+Integer = digits:[0-9]+ { return parseInt(digits.join('')); }
 
-Statements = (Statement ':')* Statement
+Statements = statements:(Statement ':')* statement:Statement { return statements.concat([statement]);}
 
 Statement = Remark
+          / Print
 
-Remark = 'REM ' [^\n]*
+Remark = 'REM ' comment:[^\n]* { return new RemarkStatement(comment); }
+Print  = 'PRINT ' printlist:PrintList { return new PrintStatement(printlist); }
 
-Printable = [^\n]
+PrintList = exprs:(Expression ';')* expr:Expression { return exprs.concat([expr]); }
+
+Expression = Constant
+
+Constant = Integer
+         / String
+
+String = '"' content:StringContent '"' { return new String(content.join('')); }
+StringContent = [a-zA-Z0-9]*
 
 // {String Chars} = {Printable} - ["]
 // {WS}           = {Whitespace} - {CR} - {LF}

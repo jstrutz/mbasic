@@ -17,13 +17,13 @@ start
   = Line*
 
 Line "line"
-  = linenum:Integer ' ' statements:Statements NewLine { return new Line(linenum, statements); }
+  = linenum:Integer ws+ statements:Statements NewLine { return new Line(linenum, statements); }
 
 NewLine = '\n'
 Printable = [^\n]
 
-ws "whitespace"
-  = [ \t\r\n]
+ws = [ \t]
+
 Integer = digits:[0-9]+ { return parseInt(digits.join('')); }
 
 Statements = statements:(Statement ws* ':')* ws* statement:Statement { return statements.concat([statement]);}

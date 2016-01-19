@@ -1,4 +1,9 @@
 {
+  function ExecutionContext(mode) {
+    this.mode = mode;
+    // this.statements = [];
+  }
+
   function Line(number, statements) {
     this.number = number;
     this.statements = statements;
@@ -14,35 +19,36 @@
 }
 
 start
-  = Line*
+  = DirectMode { var ctx = new ExecutionContext('direct'); }
 
-Line "line"
-  = linenum:Integer ws+ statements:Statements NewLine { return new Line(linenum, statements); }
+DirectMode
+  = DirectStatement+
 
-NewLine = '\n'
-Printable = [^\n]
+DirectStatement
+  = Statement
 
-ws = [ \t]
+CR = '\r'
+LF = '\n'
 
 Integer = digits:[0-9]+ { return parseInt(digits.join('')); }
 
-Statements = statements:(Statement ws* ':')* ws* statement:Statement { return statements.concat([statement]);}
-
-Statement = Remark
-          / Print
-
-Remark = 'REM' ws+ comment:[^\n]* { return new RemarkStatement(comment); }
-Print  = 'PRINT' ws+ printlist:PrintList { return new PrintStatement(printlist); }
-
-PrintList = exprs:(Expression ';')* expr:Expression { return exprs.concat([expr]); }
-
-Expression = Constant
-
-Constant = Integer
-         / String
-
-String = '"' content:StringContent '"' { return new String(content.join('')); }
-StringContent = [a-zA-Z0-9]*
+// Statements = statements:(Statement ws* ':')* ws* statement:Statement { return statements.concat([statement]);}
+//
+// Statement = Remark
+//           / Print
+//
+// Remark = 'REM' ws+ comment:[^\n]* { return new RemarkStatement(comment); }
+// Print  = 'PRINT' ws+ printlist:PrintList { return new PrintStatement(printlist); }
+//
+// PrintList = exprs:(Expression ';')* expr:Expression { return exprs.concat([expr]); }
+//
+// Expression = Constant
+//
+// Constant = Integer
+//          / String
+//
+// String = '"' content:StringContent '"' { return new String(content.join('')); }
+// StringContent = [a-zA-Z0-9]*
 
 // {String Chars} = {Printable} - ["]
 // {WS}           = {Whitespace} - {CR} - {LF}

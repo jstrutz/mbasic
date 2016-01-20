@@ -1,7 +1,6 @@
 {
-  function ExecutionContext(mode) {
-    this.mode = mode;
-    // this.statements = [];
+  function ExecutionContext() {
+    this.indirectMode = false;
   }
 
   function Line(number, statements) {
@@ -19,18 +18,26 @@
 }
 
 start
-  = DirectMode { var ctx = new ExecutionContext('direct'); }
+  = DirectMode { var ctx = new ExecutionContext(); }
 
 DirectMode
-  = DirectStatement+
+  = statements:DirectStatement+
 
 DirectStatement
-  = Statement
+  = Statement CR
 
 CR = '\r'
 LF = '\n'
 
-Integer = digits:[0-9]+ { return parseInt(digits.join('')); }
+Statement = Expression
+
+Expression
+  = Integer
+
+Integer
+  = DecimalInteger
+
+DecimalInteger = digits:[0-9]+ { return parseInt(digits.join('')); }
 
 // Statements = statements:(Statement ws* ':')* ws* statement:Statement { return statements.concat([statement]);}
 //
